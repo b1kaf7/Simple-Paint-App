@@ -3,13 +3,20 @@ const ctx = canvas.getContext('2d');
 
 let painting = false;
 let erasing = false;
+let lastX = 0;
+let lastY = 0;
 
-// Start and stop painting
-canvas.addEventListener('mousedown', () => painting = true);
+// Start painting
+canvas.addEventListener('mousedown', (e) => {
+  painting = true;
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+
+// Stop painting
 canvas.addEventListener('mouseup', () => painting = false);
 canvas.addEventListener('mouseout', () => painting = false);
 
-// Draw or erase on canva
+// Draw or erase
 canvas.addEventListener('mousemove', draw);
 
 function draw(e) {
@@ -20,23 +27,21 @@ function draw(e) {
   if (erasing) {
     ctx.clearRect(e.offsetX - size/2, e.offsetY - size/2, size, size);
   } else {
-    const color = document.getElementById('colorPicker').value;
-    ctx.fillStyle = color;
+    ctx.strokeStyle = document.getElementById('colorPicker').value;
+    ctx.lineWidth = size;
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.arc(e.offsetX, e.offsetY, size / 2, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    [lastX, lastY] = [e.offsetX, e.offsetY];
   }
 }
 
-// Button actions
+// Buttons
 document.getElementById('clearBtn').addEventListener('click', () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 });
 
-document.getElementById('drawBtn').addEventListener('click', () => {
-  erasing = false;
-});
-
-document.getElementById('eraseBtn').addEventListener('click', () => {
-  erasing = true;
-});
+document.getElementById('drawBtn').addEventListener('click', () => erasing = false);
+document.getElementById('eraseBtn').addEventListener('click', () => erasing = true);
