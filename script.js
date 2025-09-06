@@ -45,3 +45,11 @@ document.getElementById('clearBtn').addEventListener('click', () => {
 
 document.getElementById('drawBtn').addEventListener('click', () => erasing = false);
 document.getElementById('eraseBtn').addEventListener('click', () => erasing = true);
+
+// Download button
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  const link = document.createElement('a');
+  link.download = 'painting.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
